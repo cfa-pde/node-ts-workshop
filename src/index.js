@@ -1,4 +1,5 @@
-import step01 from "./step01/index.js";
-import step02 from "./step02/index.js";
+import run from "./step01/index.js";
+// import run from "./step02/index.js";
+// import run from "./step03/index.js";
 
-step02();
+run();

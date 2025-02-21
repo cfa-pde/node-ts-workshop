@@ -22,11 +22,17 @@ const getAll = (path) => async () => {
 };
 
 const getById = (path) => async (id) => {
+  if (typeof id !== "string") {
+    throw new Error("invalid id: not a string!");
+  }
   const records = await getAll(path)();
   return records.find(({ id: recordId }) => recordId === id);
 };
 
 const save = (path) => async (record) => {
+  if (!record.id) {
+    throw new Error("invalid record: no id!");
+  }
   const records = await getAll(path)();
   return fs.writeFile(path, JSON.stringify([...records, record]));
 };

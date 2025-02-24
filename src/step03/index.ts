@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
-import buildUserService from "./user-service.js";
+import buildUserService from "./user-service";
+import { UserSchema } from "./types";
 
 const run = async () => {
   const userService = await buildUserService();
@@ -12,6 +13,7 @@ const run = async () => {
 
   app.get("/users", async (req, res) => {
     const users = await userService.getAll();
+
     res.send(JSON.stringify(users));
   });
 
@@ -27,8 +29,17 @@ const run = async () => {
 
   app.post("/users", async (req, res) => {
     const serialisedUser = req.body;
-    await userService.create(serialisedUser);
-    res.send(JSON.stringify());
+
+    const { data, success } = UserSchema.safeParse(serialisedUser);
+
+    if (!success) {
+      res.status(400);
+      res.send(JSON.stringify({ error: "Invalid user" }));
+      return;
+    }
+
+    await userService.create(data);
+    res.send(JSON.stringify({ created: true }));
   });
 
   app.listen(port, () => {
